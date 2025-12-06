@@ -10,7 +10,7 @@ class APIException(Exception):
         self.message = message
 
 
-def getComic(comic_number, retries=5):
+def getComic(comic_number = None, retries=5):
     suffix = "/" + str(comic_number) if comic_number != None else ""
     for nretries in range(retries):
         query = "https://xkcd.com" + suffix + "/info.0.json"
@@ -26,8 +26,8 @@ def getComic(comic_number, retries=5):
     raise APIException("Invalid answer from API.")
 
 
-def getLatestComic(retries=5):
-    return getComic(retries)
+def getLatestComic(retries = 5):
+    return getComic(retries = retries)
 
 
 def getRandomComic(maxNumber, retries=5):
