@@ -1,4 +1,4 @@
-from telegram.ext import Updater, CommandHandler
+from telegram.ext import Updater, CommandHandler, ApplicationBuilder
 from telegram.error import TimedOut
 import requests
 from xkcd import *
@@ -13,30 +13,18 @@ subscriberChats = []
 latestComic = 0
 subscribersFile = "subscribers.json"
 
-def send_message_retry(bot, chat_id, message, retries=5):
-    for nretries in range(retries):
-        try:
-            bot.send_message(chat_id, message)
-        except TimedOut:
-            time.sleep(1)
-            continue
-        return
-    
-    raise TimedOut
+def load_env(path=".env"):
+    with open(path) as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            key, value = line.split("=", 1)
+            os.environ[key] = value
 
-def send_photo_retry(bot, chat_id, photo_path, retries=5):
-    for nretries in range(retries):
-        try:
-            bot.send_photo(chat_id, photo_path)
-        except TimedOut:
-            time.sleep(1)
-            continue
-        return
-    
-    raise TimedOut
 
-def start(bot, update):
-    update.message.reply_text(
+async def start(update, context) -> None:
+    await update.message.reply_text(
         "Hey! I'm xkcd bot. "
         "Here is my list of commands:\n"
         "/subscribe - I'll notify you whenever a new xkcd is released.\n"
@@ -65,22 +53,28 @@ def unsubscribe(bot, update):
     else:
         update.message.reply_text("Hey you're not even subscribed to begin with!")
 
-def xkcd(bot, update):
+async def xkcd(update, context):
     if update.message.text == "/xkcd" or update.message.text == "/xkcd latest":
         comic = getLatestComic()
-        send_photo_retry(bot, update.message.chat_id, comic["img"])
-        send_message_retry(bot, update.message.chat_id, "xkcd "+str(comic["num"])+"\nAlt-text: "+comic["alt"])
+        await send_comic(update, comic)
+        # await update.message.reply_photo(photo=comic["img"])
+        # await update.message.reply_text("xkcd " + str(comic["num"]) + "\nAlt-text: " + comic["alt"])
+        # await send_message_retry(bot, update.message.chat_id, "xkcd "+str(comic["num"])+"\nAlt-text: "+comic["alt"])
 
     elif update.message.text == "/xkcd random":
         comic = getRandomComic(latestComic)
-        send_photo_retry(bot, update.message.chat_id, comic["img"])
-        send_message_retry(bot, update.message.chat_id, "xkcd "+str(comic["num"])+"\nAlt-text: "+comic["alt"])
+        await send_comic(update, comic)
+        #await send_message_retry(bot, update.message.chat_id, "xkcd "+str(comic["num"])+"\nAlt-text: "+comic["alt"])
 
     else:
         xkcdNumber = int(re.search(r'\d+', update.message.text).group())
         comic = getComic(xkcdNumber)
-        send_photo_retry(bot, update.message.chat_id, comic["img"])
-        send_message_retry(bot, update.message.chat_id, "xkcd "+str(comic["num"])+"\nAlt-text: "+comic["alt"])
+        await send_comic(update, comic)
+        #await send_message_retry(bot, update.message.chat_id, "xkcd "+str(comic["num"])+"\nAlt-text: "+comic["alt"])
+
+async def send_comic(update, comic):
+    await update.message.reply_photo(photo=comic["img"])
+    await update.message.reply_text("xkcd " + str(comic["num"]) + "\nAlt-text: " + comic["alt"])
 
 def random(bot, update):
     comic = getRandomComic(latestComic)
@@ -123,40 +117,39 @@ def main():
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     
     # Configure updater with our API token.
+    load_env()
     token = os.getenv("TELEGRAM_TOKEN")
     if not token:
         raise RuntimeError("Not Telegram token provided. Add one to the `.env` file")
-    updater = Updater(token)
+    # updater = Updater(token)
+    app = ApplicationBuilder().token(token).build()
 
     # Create dispatcher and register commands.
-    dp = updater.dispatcher
+    # dp = updater.dispatcher
 
-    dp.add_handler(CommandHandler("start", start))
-    dp.add_handler(CommandHandler("help", start))
-    dp.add_handler(CommandHandler("commands", start))
-    dp.add_handler(CommandHandler("subscribe", subscribe))
-    dp.add_handler(CommandHandler("unsubscribe", unsubscribe))
-    dp.add_handler(CommandHandler("xkcd", xkcd))
-    dp.add_handler(CommandHandler("random", random))
+    app.add_handler(CommandHandler("start", start))
+    app.add_handler(CommandHandler("help", start))
+    app.add_handler(CommandHandler("commands", start))
+    # app.add_handler(CommandHandler("subscribe", subscribe))
+    # app.add_handler(CommandHandler("unsubscribe", unsubscribe))
+    app.add_handler(CommandHandler("xkcd", xkcd))
+    app.add_handler(CommandHandler("random", random))
 
     # Set latest available comic.
     setLatestComic()
 
     # Create scheduled job for notifying people about new comics (checks every 30 min).
-    notifierJob = updater.job_queue.run_repeating(comicNotify, interval=1800, first=0)
-    notifierJob.enabled = True
+    #notifierJob = updater.job_queue.run_repeating(comicNotify, interval=1800, first=0)
+    #notifierJob.enabled = True
 
     # Create scheduled job for saving the subscriber list to disk every minute.
-    subscriberSavingJob = updater.job_queue.run_repeating(saveSubscribers, interval=60, first=60)
-    subscriberSavingJob.enabled = True
+    # subscriberSavingJob = updater.job_queue.run_repeating(saveSubscribers, interval=60, first=60)
+    # subscriberSavingJob.enabled = True
 
     # Start the bot.
-    updater.start_polling()
+    app.run_polling()
 
-    updater.idle()
-
-    # Save the subscribers one last time before exiting.
-    saveSubscribers(updater.bot, subscriberSavingJob)
+    # Note it does not save the subscribers one last time before exiting.
 
 if __name__ == '__main__':
     main()
