@@ -1,6 +1,6 @@
 FROM python:3.14-alpine
+RUN apk add uv
 
 COPY . .
-RUN apk add uv
 
 CMD [ "uv", "run", "main.py" ]
