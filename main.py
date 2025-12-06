@@ -67,7 +67,7 @@ async def xkcd(update, context):
 
     elif update.message.text == "/xkcd random":
         print(latestComic)
-        comic = getRandomComic(latestComic)
+        comic = getRandomComic(4, latestComic)
         await send_comic(update, comic)
 
     else:
