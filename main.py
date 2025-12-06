@@ -63,20 +63,15 @@ async def xkcd(update, context):
     if update.message.text == "/xkcd" or update.message.text == "/xkcd latest":
         comic = getLatestComic()
         await send_comic(update, comic)
-        # await update.message.reply_photo(photo=comic["img"])
-        # await update.message.reply_text("xkcd " + str(comic["num"]) + "\nAlt-text: " + comic["alt"])
-        # await send_message_retry(bot, update.message.chat_id, "xkcd "+str(comic["num"])+"\nAlt-text: "+comic["alt"])
 
     elif update.message.text == "/xkcd random":
         comic = getRandomComic(latestComic)
         await send_comic(update, comic)
-        # await send_message_retry(bot, update.message.chat_id, "xkcd "+str(comic["num"])+"\nAlt-text: "+comic["alt"])
 
     else:
         xkcdNumber = int(re.search(r"\d+", update.message.text).group())
         comic = getComic(xkcdNumber)
         await send_comic(update, comic)
-        # await send_message_retry(bot, update.message.chat_id, "xkcd "+str(comic["num"])+"\nAlt-text: "+comic["alt"])
 
 
 async def send_comic(update, comic):
