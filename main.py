@@ -60,6 +60,7 @@ def unsubscribe(bot, update):
 
 
 async def xkcd(update, context):
+    print(update.message.text)
     if update.message.text == "/xkcd" or update.message.text == "/xkcd latest":
         comic = getLatestComic()
         await send_comic(update, comic)
@@ -135,7 +136,6 @@ def main():
     app = ApplicationBuilder().token(token).build()
 
     # Create dispatcher and register commands.
-    # dp = updater.dispatcher
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("help", start))
