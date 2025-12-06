@@ -123,7 +123,10 @@ def main():
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     
     # Configure updater with our API token.
-    updater = Updater("You should insert your API token here")
+    token = os.getenv("TELEGRAM_TOKEN")
+    if not token:
+        raise RuntimeError("Not Telegram token provided. Add one to the `.env` file")
+    updater = Updater(token)
 
     # Create dispatcher and register commands.
     dp = updater.dispatcher
