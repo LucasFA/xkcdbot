@@ -14,10 +14,6 @@ def getComic(comic_number = None, retries=5):
     suffix = "/" + str(comic_number) if comic_number != None else ""
     for nretries in range(retries):
         query = "https://xkcd.com" + suffix + "/info.0.json"
-        print("DEBUG")
-        print(query)
-        print("DEBUG")
-
         resp = requests.get(query, timeout=1)
         if resp.status_code == 200:
             return resp.json()

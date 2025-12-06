@@ -63,16 +63,19 @@ async def xkcd(update, context):
     print(update.message.text)
     if update.message.text == "/xkcd" or update.message.text == "/xkcd latest":
         comic = getLatestComic()
+        print(comic)
         await send_comic(update, comic)
 
-    elif update.message.text == "/xkcd random":
+    elif update.message.text == "/xkcd random" or update.message.text == "/random":
         print(latestComic)
         comic = getRandomComic(4, latestComic)
+        print(comic)
         await send_comic(update, comic)
 
     else:
         xkcdNumber = int(re.search(r"\d+", update.message.text).group())
         comic = getComic(xkcdNumber)
+        print(comic)
         await send_comic(update, comic)
 
 
@@ -144,7 +147,7 @@ def main():
     # app.add_handler(CommandHandler("subscribe", subscribe))
     # app.add_handler(CommandHandler("unsubscribe", unsubscribe))
     app.add_handler(CommandHandler("xkcd", xkcd))
-    app.add_handler(CommandHandler("random", random))
+    app.add_handler(CommandHandler("random", xkcd))
 
     # Set latest available comic.
     setLatestComic()
