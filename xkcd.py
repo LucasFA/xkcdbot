@@ -1,5 +1,3 @@
-import urllib
-import json
 import random
 import requests
 import time

@@ -1,13 +1,8 @@
-from telegram.ext import Updater, CommandHandler, ApplicationBuilder
-from telegram.error import TimedOut
-import requests
+from telegram.ext import CommandHandler, ApplicationBuilder
 from xkcd import *
 import logging
 import re
 import os.path
-import json
-import time
-from functools import wraps
 
 latestComic = 0
 
