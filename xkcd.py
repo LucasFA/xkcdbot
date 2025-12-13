@@ -21,11 +21,11 @@ def getComic(comic_number = None, retries=5):
 
     raise APIException("Invalid answer from API.")
 
-
 def getLatestComic(retries = 5):
     return getComic(retries = retries)
 
 
 def getRandomComic(maxNumber, retries=5):
     rand_num = str(random.randint(1, maxNumber))
-    getComic(rand_num, retries)
+    return getComic(rand_num, retries)
+

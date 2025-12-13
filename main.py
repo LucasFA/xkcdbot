@@ -28,8 +28,6 @@ async def start(update, context) -> None:
     await update.message.reply_text(
         "Hey! I'm xkcd bot. "
         "Here is my list of commands:\n"
-        "/subscribe - I'll notify you whenever a new xkcd is released.\n"
-        "/unsubscribe - I'll stop notifying you when new xkcd comics are released.\n"
         "/xkcd - Type in the comic number and I'll find it for you! Type nothing and I'll send you the latest xkcd.\n"
         "/random - I'll send you a random xkcd."
     )
@@ -60,24 +58,24 @@ def unsubscribe(bot, update):
 
 
 async def xkcd(update, context):
-    print(update.message.text)
     if update.message.text == "/xkcd" or update.message.text == "/xkcd latest":
+        setLatestComic()
         comic = getLatestComic()
-        print(comic)
         await send_comic(update, comic)
 
     elif update.message.text == "/xkcd random" or update.message.text == "/random":
-        print(latestComic)
-        comic = getComic(221)
-        print(comic)
-        await send_comic(update, comic)
+        await random(update, context)
 
     else:
         xkcdNumber = int(re.search(r"\d+", update.message.text).group())
         comic = getComic(xkcdNumber)
-        print(comic)
         await send_comic(update, comic)
 
+async def random(update, context):
+    setLatestComic()
+    print(latestComic)
+    print("HEREEEE")
+    await send_comic(update, getRandomComic(latestComic))
 
 async def send_comic(update, comic):
     await update.message.reply_photo(photo=comic["img"])
@@ -151,7 +149,7 @@ def main():
     # app.add_handler(CommandHandler("subscribe", subscribe))
     # app.add_handler(CommandHandler("unsubscribe", unsubscribe))
     app.add_handler(CommandHandler("xkcd", xkcd))
-    app.add_handler(CommandHandler("random", xkcd))
+    app.add_handler(CommandHandler("random", random))
 
     # Set latest available comic.
     setLatestComic()
