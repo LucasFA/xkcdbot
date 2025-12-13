@@ -1,4 +1,4 @@
-from telegram.ext import CommandHandler, ApplicationBuilder
+from telegram.ext import CommandHandler, ApplicationBuilder, ContextTypes
 from xkcd import getComic, getLatestComic, getRandomComic
 import logging
 import re
@@ -16,7 +16,7 @@ def load_env(path=".env"):
             os.environ[key] = value
 
 
-async def start(update, context) -> None:
+async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
         "Hey! I'm xkcd bot. "
         "Here is my list of commands:\n"
@@ -25,7 +25,7 @@ async def start(update, context) -> None:
     )
 
 
-async def xkcd(update, context) -> None:
+async def xkcd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if update.message.text == "/xkcd" or update.message.text == "/xkcd latest":
         setLatestComic()
         comic = getLatestComic()
@@ -40,7 +40,7 @@ async def xkcd(update, context) -> None:
         await send_comic(update, comic)
 
 
-async def random(update, context) -> None:
+async def random(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     setLatestComic()
     await send_comic(update, getRandomComic(latestComic))
 
@@ -58,10 +58,10 @@ def setLatestComic():
     latestComic = comic["num"]
 
 
-def main():
+def main() -> None:
     # Set up logging to stdout. Todo: Actually make a log file.
     logging.basicConfig(
-        level=logging.DEBUG,
+        level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
 
