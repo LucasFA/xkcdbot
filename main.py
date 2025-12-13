@@ -11,6 +11,7 @@ from functools import wraps
 
 latestComic = 0
 
+
 def load_env(path=".env"):
     with open(path) as f:
         for line in f:
@@ -29,6 +30,7 @@ async def start(update, context) -> None:
         "/random - I'll send you a random xkcd."
     )
 
+
 async def xkcd(update, context) -> None:
     if update.message.text == "/xkcd" or update.message.text == "/xkcd latest":
         setLatestComic()
@@ -43,9 +45,11 @@ async def xkcd(update, context) -> None:
         comic = getComic(xkcdNumber)
         await send_comic(update, comic)
 
+
 async def random(update, context) -> None:
     setLatestComic()
     await send_comic(update, getRandomComic(latestComic))
+
 
 async def send_comic(update, comic):
     await update.message.reply_photo(photo=comic["img"])
@@ -58,6 +62,7 @@ def setLatestComic():
     global latestComic
     comic = getLatestComic()
     latestComic = comic["num"]
+
 
 def main():
     # First load our subscriber list if it exists:
@@ -81,7 +86,6 @@ def main():
         raise RuntimeError("No Telegram token provided. Add one to the `.env` file")
     # updater = Updater(token)
     app = ApplicationBuilder().token(token).build()
-
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("help", start))
