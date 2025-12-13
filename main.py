@@ -132,7 +132,11 @@ def main():
     )
 
     # Configure updater with our API token.
-    load_env()
+    try:
+        load_env()
+    except FileNotFoundError:
+        print("No environment file found. Proceeding.")
+
     token = os.getenv("TELEGRAM_TOKEN")
     if not token:
         raise RuntimeError("Not Telegram token provided. Add one to the `.env` file")
