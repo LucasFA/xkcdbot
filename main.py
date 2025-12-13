@@ -1,11 +1,10 @@
 from telegram.ext import CommandHandler, ApplicationBuilder
-from xkcd import *
+from xkcd import getComic, getLatestComic, getRandomComic
 import logging
 import re
 import os.path
 
 latestComic = 0
-
 
 def load_env(path=".env"):
     with open(path) as f:
@@ -60,10 +59,6 @@ def setLatestComic():
 
 
 def main():
-    # First load our subscriber list if it exists:
-    if os.path.isfile(subscribersFile):
-        readSubscribers()
-
     # Set up logging to stdout. Todo: Actually make a log file.
     logging.basicConfig(
         level=logging.DEBUG,
@@ -84,8 +79,6 @@ def main():
 
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("help", start))
-    # app.add_handler(CommandHandler("subscribe", subscribe))
-    # app.add_handler(CommandHandler("unsubscribe", unsubscribe))
     app.add_handler(CommandHandler("xkcd", xkcd))
     app.add_handler(CommandHandler("random", random))
 

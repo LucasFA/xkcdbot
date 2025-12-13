@@ -9,7 +9,7 @@ class APIException(Exception):
 
 
 def getComic(comic_number=None, retries=5):
-    suffix = "/" + str(comic_number) if comic_number != None else ""
+    suffix = "/" + str(comic_number) if comic_number is not None else ""
     for nretries in range(retries):
         query = "https://xkcd.com" + suffix + "/info.0.json"
         resp = requests.get(query, timeout=1)
