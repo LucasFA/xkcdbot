@@ -48,7 +48,7 @@ async def random(update, context: ContextTypes.DEFAULT_TYPE) -> None:
 async def send_comic(update, comic):
     await update.message.reply_photo(photo=comic["img"])
     await update.message.reply_text(
-        str(comic["num"]) + ". " + comic["safe_title"] + "\n'" + comic["alt"] + "'"
+        str(comic["num"]) + ". \"" + comic["safe_title"] + "\"\n'" + comic["alt"] + "'"
     )
 
 
