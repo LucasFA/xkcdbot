@@ -9,8 +9,8 @@ RUN addgroup --system appgroup && \
 USER appuser
 
 COPY pyproject.toml uv.lock ./
-RUN uv sync --frozen
+RUN uv sync --frozen --no-dev
 
 COPY . .
 
-CMD [ "uv", "run", "main.py", "--no-dev" ]
+CMD [ "uv", "run", "main.py" ]
