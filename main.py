@@ -16,7 +16,7 @@ def load_env(path=".env"):
             os.environ[key] = value
 
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def start(update, context: ContextTypes.DEFAULT_TYPE) -> None:
     await update.message.reply_text(
         "Hey! I'm xkcd bot. "
         "Here is my list of commands:\n"
@@ -25,7 +25,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
 
 
-async def xkcd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def xkcd(update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if update.message.text == "/xkcd" or update.message.text == "/xkcd latest":
         setLatestComic()
         comic = getLatestComic()
@@ -40,7 +40,7 @@ async def xkcd(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         await send_comic(update, comic)
 
 
-async def random(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+async def random(update, context: ContextTypes.DEFAULT_TYPE) -> None:
     setLatestComic()
     await send_comic(update, getRandomComic(latestComic))
 
