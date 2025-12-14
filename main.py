@@ -51,7 +51,7 @@ async def send_comic(update, comic):
     alt = comic["alt"]
     await update.message.reply_photo(photo=comic["img"])
     await update.message.reply_html(
-        f'{num}. <a href="https://xkcd.com/{num}">{title}</a>\n'
+        f'{num}. <a href="https://m.xkcd.com/{num}">{title}</a>\n'
         f'<i>{alt}</i>',
         disable_web_page_preview=True
     )
