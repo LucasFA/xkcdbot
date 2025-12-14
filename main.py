@@ -46,9 +46,14 @@ async def random(update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
 async def send_comic(update, comic):
+    num = comic["num"]
+    title = comic["safe_title"]
+    alt = comic["alt"]
     await update.message.reply_photo(photo=comic["img"])
-    await update.message.reply_text(
-        str(comic["num"]) + ". \"" + comic["safe_title"] + "\"\n'" + comic["alt"] + "'"
+    await update.message.reply_html(
+        f'{num}. <a href="https://xkcd.com/{num}">{title}</a>\n'
+        f'<i>{alt}</i>',
+        disable_web_page_preview=True
     )
 
 
