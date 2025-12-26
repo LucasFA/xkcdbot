@@ -6,6 +6,7 @@ import os.path
 
 latestComic = 0
 
+
 def load_env(path=".env"):
     with open(path) as f:
         for line in f:
@@ -52,8 +53,9 @@ async def send_comic(update, comic):
     await update.message.reply_photo(photo=comic["img"])
     await update.message.reply_html(
         f'{num}. <a href="https://m.xkcd.com/{num}">{title}</a>\n'
-        f'<i>{alt}</i>',
-        disable_web_page_preview=True
+        f"<i>{alt}</i>\n"
+        f'<a href="https://explainxkcd.com/wiki/index.php/{num}">Explanation</a>',
+        disable_web_page_preview=True,
     )
 
 
